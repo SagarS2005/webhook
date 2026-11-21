@@ -34,7 +34,6 @@ Client ──POST /api/webhooks/dispatch──▶ validate ─▶ save job (Mong
 
 ```bash
 npm install
-cp .env.example .env     # set MONGODB_URI (Atlas free tier works)
 npm run dev
 npm test                 # unit tests (validation, rate limiter, SSRF guard)
 ```
@@ -44,7 +43,7 @@ npm test                 # unit tests (validation, rate limiter, SSRF guard)
 ## Test it (curl)
 
 ```bash
-BASE=http://localhost:3000   # or your live URL
+BASE=https://webhook-4ac8.onrender.com
 send() { curl -s -w "\n(%{time_total}s)\n" -X POST "$BASE/api/webhooks/dispatch" \
   -H 'Content-Type: application/json' \
   -d "{\"destinationUrl\":\"$BASE/mock/$1\",\"eventId\":\"$2\",\"payload\":{\"event\":\"user.signup\",\"userId\":\"usr_999\"}}"; }
@@ -109,6 +108,4 @@ curl -s -X POST $BASE/api/webhooks/dispatch -H 'Content-Type: application/json' 
 
 Note: the Render free tier sleeps when idle, so the first request after a pause takes ~30s to wake. Retries still complete because the service stays awake while jobs are pending.
 
-## Configuration
 
-See `.env.example`. Defaults: 3 retries, 2s base delay, 5s request timeout, 5 concurrent deliveries, burst 5 at 2 req/s per host.
